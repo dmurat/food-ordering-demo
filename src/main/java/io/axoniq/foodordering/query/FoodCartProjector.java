@@ -39,7 +39,7 @@ class FoodCartProjector {
         );
     }
 
-    @QueryHandler
+//    @QueryHandler
     public FoodCartView handle(FindFoodCartQuery query) {
         return foodCartViewRepository.findById(query.getFoodCartId()).orElse(null);
     }

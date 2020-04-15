@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Aggregate
+//@Aggregate
 class FoodCart {
 
     private static final Logger logger = LoggerFactory.getLogger(FoodCart.class);
 
-    @AggregateIdentifier
+//    @AggregateIdentifier
     private UUID foodCartId;
     private Map<UUID, Integer> selectedProducts;
     private boolean confirmed;
@@ -35,17 +35,17 @@ class FoodCart {
         // Required by Axon
     }
 
-    @CommandHandler
+//    @CommandHandler
     public FoodCart(CreateFoodCartCommand command) {
         AggregateLifecycle.apply(new FoodCartCreatedEvent(command.getFoodCartId()));
     }
 
-    @CommandHandler
+//    @CommandHandler
     public void handle(SelectProductCommand command) {
         AggregateLifecycle.apply(new ProductSelectedEvent(foodCartId, command.getProductId(), command.getQuantity()));
     }
 
-    @CommandHandler
+//    @CommandHandler
     public void handle(DeselectProductCommand command) throws ProductDeselectionException {
         UUID productId = command.getProductId();
         int quantity = command.getQuantity();
@@ -64,7 +64,7 @@ class FoodCart {
         AggregateLifecycle.apply(new ProductDeselectedEvent(foodCartId, productId, quantity));
     }
 
-    @CommandHandler
+//    @CommandHandler
     public void handle(ConfirmOrderCommand command) {
         if (confirmed) {
             logger.warn("Cannot confirm a Food Cart order which is already confirmed");
@@ -74,19 +74,19 @@ class FoodCart {
         AggregateLifecycle.apply(new OrderConfirmedEvent(foodCartId));
     }
 
-    @EventSourcingHandler
+//    @EventSourcingHandler
     public void on(FoodCartCreatedEvent event) {
         foodCartId = event.getFoodCartId();
         selectedProducts = new HashMap<>();
         confirmed = false;
     }
 
-    @EventSourcingHandler
+//    @EventSourcingHandler
     public void on(ProductSelectedEvent event) {
         selectedProducts.merge(event.getProductId(), event.getQuantity(), Integer::sum);
     }
 
-    @EventSourcingHandler
+//    @EventSourcingHandler
     public void on(ProductDeselectedEvent event) {
         selectedProducts.computeIfPresent(
                 event.getProductId(),
@@ -94,7 +94,7 @@ class FoodCart {
         );
     }
 
-    @EventSourcingHandler
+//    @EventSourcingHandler
     public void on(OrderConfirmedEvent event) {
         confirmed = true;
     }
